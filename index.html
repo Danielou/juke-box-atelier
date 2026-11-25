@@ -1,0 +1,251 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Le juke-box de l'atelier</title>
+<meta name="description" content="Sept morceaux et leurs films, faits à l'atelier par Daniel Requejo et Claude.">
+<style>
+@property --teinte { syntax: '<number>'; inherits: true; initial-value: 0; }
+:root {
+  color-scheme: dark;
+  --bois-1: #5a2a12; --bois-2: #8a4a22; --bois-3: #3a1a0a;
+  --chrome: linear-gradient(180deg, #f4f4f4, #9aa0a6 45%, #e9e9e9 55%, #7c8288);
+  --creme: #f6ecd2;
+  --or: #e8b44c;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0; min-height: 100vh; display: grid; place-items: center; padding: 2rem 1rem 3rem;
+  font-family: Georgia, 'DejaVu Serif', serif; color: var(--creme);
+  background: radial-gradient(ellipse at 50% 30%, #3b1d14 0%, #1a0d09 55%, #0b0605 100%);
+}
+.meuble {
+  --teinte: 0;
+  position: relative; width: min(100%, 920px); padding: 0 2.2rem 2.2rem;
+  border-radius: 460px 460px 28px 28px / 300px 300px 28px 28px;
+  background:
+    linear-gradient(90deg, var(--bois-3), var(--bois-2) 8%, var(--bois-1) 18%, var(--bois-1) 82%, var(--bois-2) 92%, var(--bois-3));
+  box-shadow: 0 2px 0 #c58a4a inset, 0 40px 60px -20px #000, 0 0 120px -20px oklch(70% 0.2 calc(var(--teinte) * 1deg) / 0.45);
+  isolation: isolate;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .meuble.lumieres { animation: arc-en-ciel 12s linear infinite; }
+  .meuble.lumieres .bulle { animation: monte var(--d, 5s) linear infinite; animation-delay: var(--r, 0s); }
+}
+@keyframes arc-en-ciel { to { --teinte: 360; } }
+@keyframes monte { from { translate: 0 0; opacity: 0; } 15% { opacity: .9; } to { translate: 0 -280px; opacity: 0; } }
+/* le dôme lumineux et ses tubes */
+.dome {
+  position: relative; margin: 0 -2.2rem; height: 300px;
+  border-radius: 460px 460px 0 0 / 300px 300px 0 0; overflow: hidden;
+  background:
+    radial-gradient(ellipse at 50% 110%, #2a120a 0 38%, transparent 39%),
+    conic-gradient(in oklch longer hue from 270deg at 50% 100%,
+      oklch(72% 0.19 calc(var(--teinte) * 1deg)), oklch(72% 0.19 calc(var(--teinte) * 1deg + 180deg)), oklch(72% 0.19 calc(var(--teinte) * 1deg)));
+}
+.dome::before {                                          /* les arches chromées */
+  content: ''; position: absolute; inset: 0;
+  background: repeating-radial-gradient(ellipse at 50% 100%, transparent 0 46px, #d9d9d9 46px 50px, transparent 50px 62px);
+  mix-blend-mode: overlay; opacity: .7;
+}
+.dome h1 {
+  position: absolute; inset: auto 0 40px; margin: 0; text-align: center; z-index: 2;
+  font-style: italic; font-size: clamp(1.6rem, 4vw, 2.6rem); letter-spacing: .04em; color: var(--creme);
+  text-shadow: 0 0 12px oklch(80% 0.18 calc(var(--teinte) * 1deg + 40deg)), 0 2px 0 #3a1a0a;
+}
+.dome p { position: absolute; inset: auto 0 14px; margin: 0; text-align: center; font-size: .9rem; opacity: .85; z-index: 2; }
+.tube { position: absolute; bottom: 0; width: 26px; height: 260px; border-radius: 13px 13px 0 0; overflow: hidden;
+  background: linear-gradient(90deg, #fff3 0, #fff8 30%, #fff2 60%, #0003), oklch(70% 0.2 calc(var(--teinte) * 1deg + var(--decal, 0deg)));
+  box-shadow: 0 0 18px oklch(75% 0.2 calc(var(--teinte) * 1deg + var(--decal, 0deg))); }
+.tube.g { left: 9%; rotate: -14deg; transform-origin: bottom; --decal: 120deg; }
+.tube.d { right: 9%; rotate: 14deg; transform-origin: bottom; --decal: 240deg; }
+.bulle { position: absolute; bottom: 4px; left: calc(var(--x, 8) * 1px); width: 8px; height: 8px; border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #fff, #fff6 60%, transparent 70%); opacity: 0; }
+/* l'écran */
+.ecran {
+  position: relative; margin: -10px auto 0; padding: 14px; border-radius: 18px; background: var(--chrome);
+  box-shadow: 0 0 0 3px #3a1a0a, 0 12px 30px #000c;
+}
+.ecran video, .ecran iframe { display: block; width: 100%; height: auto; aspect-ratio: 16 / 9; border: 0; border-radius: 8px; background: #000; }
+.cartouche {
+  margin: 1.2rem auto 0; padding: 1rem 1.3rem; border-radius: 12px; background: var(--creme); color: #3a1a0a;
+  box-shadow: 0 0 0 4px var(--or), 0 0 0 7px #3a1a0a; line-height: 1.5;
+}
+.cartouche h2 { margin: 0 0 .2rem; font-size: 1.35rem; }
+.cartouche .style { margin: 0 0 .6rem; font-style: italic; color: #8a4a22; }
+.cartouche p { margin: 0; }
+/* le sélecteur : des étiquettes comme dans les vieux juke-box */
+.selecteur { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: .7rem; margin: 1.4rem 0 0; padding: 0; list-style: none; }
+.selecteur button {
+  all: unset; box-sizing: border-box; cursor: pointer; display: grid; grid-template-columns: 3.2rem 1fr; align-items: center; gap: .6rem;
+  width: 100%; padding: .45rem .6rem; border-radius: 6px; background: #fbf5e3; color: #3a1a0a;
+  border-block: 3px double #c23b22; box-shadow: 0 3px 0 #0006;
+  transition: translate .15s, box-shadow .15s, background-color .2s;
+}
+.selecteur button:hover { translate: 0 -2px; box-shadow: 0 5px 0 #0006; }
+.selecteur button:focus-visible { outline: 3px solid var(--or); outline-offset: 3px; }
+.selecteur button[aria-pressed="true"] { background: #ffe9a8; box-shadow: 0 0 0 3px var(--or), 0 0 24px oklch(80% 0.17 80); }
+.selecteur img { width: 3.2rem; height: 3.2rem; object-fit: cover; border-radius: 4px; }
+.selecteur .num { font-weight: bold; color: #c23b22; margin-right: .3rem; }
+.selecteur .t { display: block; font-weight: bold; }
+.selecteur .s { display: block; font-size: .82rem; font-style: italic; color: #8a4a22; }
+/* la grille du haut-parleur et les commandes */
+.bas { display: grid; grid-template-columns: 1fr auto; gap: 1rem; align-items: center; margin-top: 1.4rem; }
+.grille { height: 90px; border-radius: 10px; background:
+  repeating-linear-gradient(90deg, #c9ccd0 0 3px, #2a120a 3px 12px), linear-gradient(#0000, #0006); box-shadow: inset 0 0 0 3px #e8e8e8, inset 0 8px 18px #000a; }
+.commandes { display: grid; gap: .5rem; }
+.commandes button, .commandes label {
+  font: inherit; font-size: .95rem; color: #3a1a0a; background: var(--chrome); border: 0; border-radius: 999px; padding: .5rem 1rem; cursor: pointer;
+  box-shadow: 0 3px 0 #3a1a0a; display: flex; gap: .4rem; align-items: center; justify-content: center;
+}
+.commandes button:focus-visible, .commandes label:focus-within { outline: 3px solid var(--or); outline-offset: 2px; }
+.pied { margin-top: 1.2rem; text-align: center; font-size: .8rem; opacity: .75; }
+</style>
+</head>
+<body>
+<main class="meuble lumieres" id="meuble">
+  <div class="dome" aria-hidden="false">
+    <div class="tube g"><span class="bulle" style="--x:12;--d:4s;--r:0s"></span><span class="bulle" style="--x:4;--d:5s;--r:1.1s"></span><span class="bulle" style="--x:16;--d:6s;--r:2.2s"></span><span class="bulle" style="--x:8;--d:7s;--r:3.3000000000000003s"></span></div>
+    <div class="tube d"><span class="bulle" style="--x:6;--d:4.5s;--r:0s"></span><span class="bulle" style="--x:14;--d:5.5s;--r:0.9s"></span><span class="bulle" style="--x:3;--d:6.5s;--r:1.8s"></span><span class="bulle" style="--x:11;--d:7.5s;--r:2.7s"></span></div>
+    <h1>Le juke-box de l'atelier</h1>
+    <p>Choisissez un titre, l'atelier joue.</p>
+  </div>
+  <div class="ecran" id="ecran"></div>
+  <section class="cartouche" aria-live="polite">
+    <h2 id="titre"></h2>
+    <p class="style" id="style"></p>
+    <p id="texte"></p>
+  </section>
+  <ul class="selecteur" id="selecteur"></ul>
+  <div class="bas">
+    <div class="grille" aria-hidden="true"></div>
+    <div class="commandes">
+      <button type="button" id="hasard">Au hasard</button>
+      <label><input type="checkbox" id="enchainer" checked> Enchaîner</label>
+      <button type="button" id="lumieres" aria-pressed="true">Lumières : marche</button>
+    </div>
+  </div>
+  <p class="pied">Musique, images et paroles : Daniel Requejo et Claude, à l'atelier, novembre 2026. Crédits complets dans la description de chaque film.</p>
+</main>
+<script>
+// Pour passer sur YouTube : remplir le champ « youtube » avec l'identifiant de la vidéo (les 11 caractères après « v= »).
+const TITRES = [
+ {
+  "id": "A1",
+  "titre": "Le bruit de l'atelier",
+  "style": "à la manière d'Art of Noise et Colourbox",
+  "duree": "2:18",
+  "fichier": "../films/le-bruit-de-l-atelier-film.mp4",
+  "texte": "Les années 80 des échantillonneurs : coups d'orchestre, échos de dub. Dedans, ma sanza à huit lames, deux bols tibétains et mon tambour chaman, enregistrés au micro. Les rythmes sont écrits avec le compilateur de René Bastian, paru en 1992 dans Pascalissime : il calculait des durées sans jamais jouer, maintenant il joue. Grue, tracteur, bulldozer, drone et bras robot dansent autour d'une éolienne.",
+  "pochette": "pochettes/A1.jpg",
+  "youtube": "tzFJsTAbaRc"
+ },
+ {
+  "id": "A2",
+  "titre": "Le fil du rythme",
+  "style": "à la manière de TribeQa",
+  "duree": "2:10",
+  "fichier": "../films/le-fil-du-rythme-film-public.mp4",
+  "texte": "Afro-jazz et hip-hop : balafon, deux mbiras croisées comme au Zimbabwe, didgeridoo accordé en ré. Instruments de peuples premiers enregistrés par la Versilian Community Sample Library. La nuit, dans une clairière, dix animaux de la forêt dansent autour du feu : ronde, grands sauts au refrain, solos devant les flammes pendant le balafon.",
+  "pochette": "pochettes/A2.jpg",
+  "youtube": "wUTDfT82fNI"
+ },
+ {
+  "id": "A3",
+  "titre": "Le taxi Volpe",
+  "style": "à la manière de Frank Zappa",
+  "duree": "2:29",
+  "fichier": "../films/le-taxi-volpe-film.mp4",
+  "texte": "Xylophone, marimba et cuivres à l'unisson en 7/8, funk sec, récitant à voix grave. L'histoire vraie, ou presque, d'un retour en taxi avec un âne sur la banquette arrière, cent trente kilomètres de silence et une monnaie rendue en carottes. Pendant le solo de xylophone, chaque lame de la route s'allume sur sa note.",
+  "pochette": "pochettes/A3.jpg",
+  "youtube": "i4NCVhW71lA"
+ },
+ {
+  "id": "A4",
+  "titre": "Phrase pour Daniel",
+  "style": "musique répétitive à la manière de Steve Reich",
+  "duree": "5:36",
+  "fichier": "../films/phrase-pour-daniel-film.mp4",
+  "texte": "Trois secondes de mon chant, bouclées à gauche et à droite, qui glissent lentement l'une sur l'autre. Deux marimbas jouent le même motif, la seconde se décale d'une pulsation à la fois jusqu'à revenir à l'unisson. Mes bols et mon tambour marquent les changements. Les images suivent la partition : chaque lame s'allume sur sa note.",
+  "pochette": "pochettes/A4.jpg",
+  "youtube": "rWj30HsDdyk"
+ },
+ {
+  "id": "A5",
+  "titre": "Ma statue s'est tue",
+  "style": "à la manière de Boby Lapointe",
+  "duree": "2:09",
+  "fichier": "../films/ma-statue-s-est-tue-film.mp4",
+  "texte": "Jeux de mots laids d'un sculpteur et de ses outils : le ciseau si sot, la lime qui rime, la Vénus qui coûte les deux bras, le buste qui fait la tête, la cire perdue jamais retrouvée. Swing manouche et théâtre de Guignol.",
+  "pochette": "pochettes/A5.jpg",
+  "youtube": "uWgQTNbzCWM"
+ },
+ {
+  "id": "A6",
+  "titre": "Les deux nuits",
+  "style": "Cantique des cantiques",
+  "duree": "3:06",
+  "fichier": "../films/cantique-deux-nuits-film.mp4",
+  "texte": "Une femme cherche dans la nuit celui que son cœur aime. La deuxième nuit, il frappe à sa porte ; elle ouvre, il est parti. Petit film d'animation à l'encre indigo et à l'or, trois voix, Elle, Lui et le Chœur, sur la traduction Crampon de 1904.",
+  "pochette": "pochettes/A6.jpg",
+  "youtube": "rML8EV1XLbE"
+ },
+ {
+  "id": "A7",
+  "titre": "Racines profondes",
+  "style": "reggae roots à la manière de Bob Marley et de Dillinger",
+  "duree": "2:34",
+  "fichier": "../films/racines-profondes-film.mp4",
+  "texte": "Batterie one drop, guitare et orgue sur les contretemps, cuivres à l'unisson et chœur à deux voix. Un deejay parle en rythme sur la basse, puis le dub du milieu : la guitare et la batterie s'en vont, les échos tournent, la basse reste. La nuit sur trois chaînes de montagnes, puis l'aube, et chaque note de basse fait battre la lumière.",
+  "pochette": "pochettes/A7.jpg",
+  "youtube": "sS_Zodb1JwE"
+ }
+];
+const ecran = document.getElementById('ecran'), sel = document.getElementById('selecteur');
+let courant = -1;
+function jouer(i, lancer = true) {
+  courant = i; const x = TITRES[i];
+  document.getElementById('titre').textContent = x.id + ' · ' + x.titre + ' (' + x.duree + ')';
+  document.getElementById('style').textContent = x.style;
+  document.getElementById('texte').textContent = x.texte;
+  sel.querySelectorAll('button').forEach((b, k) => b.setAttribute('aria-pressed', String(k === i)));
+  ecran.replaceChildren();
+  // YouTube refuse de jouer dans une page ouverte en file:// (erreur 153, pas de provenance) :
+  // depuis le disque, on lit le film local ; en ligne (http/https), on passe par YouTube.
+  if (x.youtube && location.protocol.startsWith('http')) {
+    const f = document.createElement('iframe');
+    f.referrerPolicy = 'strict-origin-when-cross-origin';
+    f.src = 'https://www.youtube-nocookie.com/embed/' + encodeURIComponent(x.youtube) + (lancer ? '?autoplay=1' : '');
+    f.title = x.titre; f.allow = 'autoplay; encrypted-media; picture-in-picture; fullscreen'; f.width = 1280; f.height = 720;
+    ecran.append(f);
+  } else {
+    const v = document.createElement('video');
+    v.src = x.fichier; v.poster = x.pochette; v.controls = true; v.width = 1280; v.height = 720; v.preload = 'metadata';
+    v.addEventListener('ended', () => { if (document.getElementById('enchainer').checked) jouer((courant + 1) % TITRES.length); });
+    ecran.append(v);
+    if (lancer) v.play().catch(() => {});
+  }
+}
+TITRES.forEach((x, i) => {
+  const li = document.createElement('li'), b = document.createElement('button');
+  b.type = 'button'; b.setAttribute('aria-pressed', 'false');
+  b.innerHTML = '<img alt="" width="96" height="96"><span><span class="t"><span class="num"></span></span><span class="s"></span></span>';
+  b.querySelector('img').src = x.pochette;
+  b.querySelector('.num').textContent = x.id;
+  b.querySelector('.t').append(x.titre);
+  b.querySelector('.s').textContent = x.style + ' · ' + x.duree;
+  b.addEventListener('click', () => jouer(i));
+  li.append(b); sel.append(li);
+});
+document.getElementById('hasard').addEventListener('click', () => {
+  let i; do { i = Math.floor(Math.random() * TITRES.length); } while (i === courant && TITRES.length > 1); jouer(i);
+});
+const lum = document.getElementById('lumieres'), meuble = document.getElementById('meuble');
+lum.addEventListener('click', () => {
+  const on = meuble.classList.toggle('lumieres'); lum.setAttribute('aria-pressed', String(on)); lum.textContent = 'Lumières : ' + (on ? 'marche' : 'arrêt');
+});
+jouer(0, false);
+</script>
+</body>
+</html>
