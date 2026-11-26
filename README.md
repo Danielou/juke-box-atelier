@@ -1,6 +1,6 @@
 # Le juke-box de l'atelier
 
-Dix morceaux et leurs films, faits à l'atelier par Daniel Requejo et Claude (novembre 2026).
+Douze morceaux et leurs films, faits à l'atelier par Daniel Requejo et Claude (novembre 2026).
 
 À écouter : https://danielou.github.io/juke-box-atelier/
 
